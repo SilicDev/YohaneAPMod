@@ -1,0 +1,4 @@
+[submodule "lib/APCpp"]
+	path = lib/APCpp
+	url = https://github.com/SilicDev/APCpp.git
+	branch = yohane_main

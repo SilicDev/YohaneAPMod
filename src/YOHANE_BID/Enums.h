@@ -1,0 +1,88 @@
+#pragma once
+#include <stdint.h>
+
+enum class EquipmentEffect
+{
+    NONE,
+    FIRE_RESISTANCE,
+    LIGHTNING_RESISTANCE,
+    ICE_RESISTANCE,
+    DAMAGE_RESISTANCE,
+    SLIDE_INVULNERABILITY,
+    NULL_DAMAGE,
+    NULL_STATUS,
+    NULL_POISON,
+    NULL_VENOM,
+    NULL_FREEZE,
+    NULL_SOLITUDE,
+    NULL_ATTACK_DEBUFF,
+    NULL_DEFENSE_DEBUFF,
+    REDUCE_CASE_DP,
+    REDUCE_SUMMON_DP,
+    INCREASE_WEAPON_ATTACK,
+    INCREASE_ALLY_ATTACK,
+    INCREASE_LAILAPS_ATTACK,
+    INCREASE_CRIT_RATE,
+    INCREASE_BUFF_DURATION,
+    REDUCE_GUTS_CONSUMPTION,
+    Unknown_0x16,
+    Unknown_0x17,
+    Unknown_0x18,
+    Unknown_0x19,
+    REFLECT_DAMAGE,
+    CONVERT_DAMAGE_DP,
+    RECOVER_HP,
+    RECOVER_DP,
+    INCREASE_DROPRATE,
+    INSTANT_KILL,
+    FIX_DAMAGE_RECEIVED, //?
+    FIX_DAMAGE_DEALT, //?
+    MULTIPLY_DAMAGE_RECEIVED,
+    MULTIPLY_DAMAGE_DEALT,
+};
+
+enum class ExpendablesEffect
+{
+    NONE,
+    RECOVER_HP_PERCENT,
+    RECOVER_HP,
+    RECOVER_DP_PERCENT,
+    RECOVER_DP,
+    CURE_POISON,
+    CURE_VENOM,
+    CURE_FREEZE,
+    CURE_SOLITUDE,
+    BUFF_ATTACK,
+    BUFF_DEFENSE,
+    CURE_DEBUFF,
+    MUSICAL_SCORE,
+};
+
+enum class Area: uint8_t
+{
+    NONE,
+    SUNKEN_TEMPLE,
+    RUINS,
+    GROTTO,
+    CORAL_HILL,
+    SEA_OF_TREES,
+    CRYSTALLINE_GROTTO,
+    SUNKEN_VOLCANO,
+    SHIPWRECK,
+    INFERNAL_ALTAR,
+    AQUORS_MEMORIA,
+    NUM_AREA,
+};
+
+namespace IceVariantFlags
+{
+    enum IceVariantFlags : uint32_t
+    {
+        HAS_STRING = 1,
+        HAS_INT = 2,
+        HAS_FLOAT = 4,
+        HAS_UTF8 = 8,
+        HASHED = 0x10,
+        ALL = 0x1F
+    };
+}
