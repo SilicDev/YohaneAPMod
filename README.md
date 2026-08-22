@@ -8,7 +8,7 @@ Archipelago randomizer for YOHANE THE PARHELION -BLAZE in the DEEPBLUE-
 Download the zip from [Releases](https://github.com/SilicDev/YohaneAPMod/releases/latest) and place its contents in 
 `<path_to_game.exe>/.mods/YohaneAPMod`. Manually copy the APCpp.dll so it is next to the game.exe or run the ```CopyAPCppDll.bat```
 to move it to a position the game can find it in.
-Add it to the modloader's active_mods in `.mods/.modloader/config.ini` to make the game load the mod.
+Add the mods's folder name to the modloader's active_mods in `.mods/.modloader/config.ini` to make the game load the mod.
 Enter your connection details in the included config.ini and you are good to go.
 
 ### Build 
