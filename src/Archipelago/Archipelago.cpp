@@ -430,7 +430,7 @@ void APManager::OnFrame(double delta)
                 }
                 else if (is_dead && can_send_deathlink)
                 {
-                    SendDeath("Yohane ran out of HP.");
+                    SendDeath("%YOU% let Yohane run out of HP.");
                     can_send_deathlink = false;
                 }
             }
@@ -441,7 +441,7 @@ void APManager::OnFrame(double delta)
                 uint32_t max_health = *((uint32_t*)yohane_struct_ptr + 6);
                 if (health < last_health && max_health == last_max_health)
                 {
-                    SendDamage(last_health - health, "Yohane got hit.");
+                    SendDamage(last_health - health, "%YOU% let Yohane get hit.");
                 }
                 last_health = health;
                 last_max_health = max_health;
