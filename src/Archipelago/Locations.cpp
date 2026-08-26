@@ -389,7 +389,7 @@ std::shared_ptr<FunctionHook<bool, void*, uint64_t*, uint64_t*>> on_craft_recipe
 
 bool OnOpenChestOverride(void* chest_work, int64_t param_1, uint64_t* param_2, uint64_t param_3)
 {
-    if (APManager::getInstance().IsRunning() && APManager::getInstance().CraftSanityEnabled())
+    if (APManager::getInstance().IsRunning())
     {
         if (*(uint32_t*)(param_2 + 5) < 10)
         {
@@ -418,7 +418,7 @@ bool OnOpenChestOverride(void* chest_work, int64_t param_1, uint64_t* param_2, u
 bool OnCraftRecipeOverride(void* work, uint64_t* param_1, uint64_t* param_2)
 {
     uint64_t* puVar2 = (uint64_t*)param_2[3];
-    if ((*(uint32_t*)(param_2 + 5)) == 0xd && (puVar2[7] == 0) && APManager::getInstance().IsRunning())
+    if ((*(uint32_t*)(param_2 + 5)) == 0xd && (puVar2[7] == 0) && APManager::getInstance().IsRunning() && APManager::getInstance().CraftSanityEnabled())
     {
         int64_t lVar19 = *(int64_t*)((uint64_t)work + 0x568 + 0x8);
         if (lVar19 != 0 && (*(int64_t*)(lVar19 + 0x160) != 0) && ((*(int32_t*)(base + 0x11632cc) != 1)))
