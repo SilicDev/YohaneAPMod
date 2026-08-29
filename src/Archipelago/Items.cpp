@@ -450,7 +450,7 @@ void ItemManager::SetMusicalScores(uint64_t musical_scores)
 std::string ItemManager::FormatDescription(std::string desc)
 {
     // might need a more complex check for colours
-    for (int i = 0x38; i < desc.size(); i += 0x38)
+    for (int i = 0x30; i < desc.size(); i += 0x30)
     {
         i = desc.find_last_of(' ', i) + 1;
         desc.insert(i, "\n");
