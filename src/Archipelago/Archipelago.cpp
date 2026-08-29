@@ -39,6 +39,10 @@ CommandHandler damagelink_cmd = { "damagelink", "[toggle]", "Sets the damagelink
             [](const char* args) { APManager::getInstance().ProcessDamageLinkCmd(args); } };
 CommandHandler damagelink_group_cmd = { "damagelink_group", "[group]", "Sets the damagelink group for AP",
             [](const char* args) { APManager::getInstance().ProcessDamageLinkGroupCmd(args); } };
+CommandHandler inventory_cmd = { "inventory", "", "Print the AP received items.",
+            [](const char* args) { APManager::getInstance().ProcessInventoryCmd(args); } };
+CommandHandler silic_asked_cmd = { "silic_asked", "[type]", "Print additional information about the game state.",
+            [](const char* args) { APManager::getInstance().ProcessInformationCmd(args); } };
 
 void CryptData(uint64_t* data, uint64_t size)
 {
@@ -59,6 +63,8 @@ bool APManager::Init(const char* path) {
         helperFunctions.register_command(deathlink_group_cmd);
         helperFunctions.register_command(damagelink_cmd);
         helperFunctions.register_command(damagelink_group_cmd);
+        helperFunctions.register_command(inventory_cmd);
+        helperFunctions.register_command(silic_asked_cmd);
     }
     helperFunctions.log_info("Initialising AP connection...");
     char buf[MAX_PATH] = { 0 };
@@ -1039,7 +1045,7 @@ void APManager::ProcessDamageLinkCmd(std::string args)
     else
     {
         args = trim(args);
-        std::vector<std::string> arg_list = split(args, " \t\n\r\f\v");
+        std::vector<std::string> arg_list = split(args, " ");
         std::string toggle = arg_list[0];
         std::transform(toggle.begin(), toggle.end(), toggle.begin(), ::tolower);
         if (toggle == "on" || toggle == "true" || toggle == "yes" || toggle == "1")
@@ -1082,7 +1088,7 @@ void APManager::ProcessDamageLinkGroupCmd(std::string args)
     }
     else
     {
-        std::vector<std::string> arg_list = split(args, " \t\n\r\f\v");
+        std::vector<std::string> arg_list = split(args, " ");
         std::string group = arg_list[0];
         if (group != damagelink_group)
         {
@@ -1092,6 +1098,38 @@ void APManager::ProcessDamageLinkGroupCmd(std::string args)
         else
         {
             helperFunctions.log_info("Already in Damage Link group '%s'", group);
+        }
+    }
+}
+
+void APManager::ProcessInventoryCmd(std::string args)
+{
+    auto items = ItemManager::getInstance().GetReceivedItems();
+    std::string message = "Received Items: ";
+    for (auto& item : items)
+    {
+        char buf[0x100] = { 0 };
+        sprintf_s(buf, 0x100, "%s (%lld), ", GetItemName(item.first), item.second);
+        message += buf;
+    }
+    helperFunctions.log_info(message.c_str());
+}
+
+void APManager::ProcessInformationCmd(std::string args)
+{
+    if (args.empty()) // no type, print everything
+    {
+        PrintGameFlags();
+    }
+    else
+    {
+        std::vector<std::string> arg_list = split(args, " ");
+        for (size_t i = 0; i < arg_list.size(); i++)
+        {
+            if (arg_list.at(i) == "flags")
+            {
+                PrintGameFlags();
+            }
         }
     }
 }
@@ -1149,4 +1187,21 @@ std::string APManager::FormatNetworkItemForLog(AP_NetworkItem& item)
         item_name = "<color/darkgrey>" + item_name + "</color>";
     }
     return item_name;
+}
+
+void APManager::PrintGameFlags()
+{
+    std::string message = "Important Game Flags: \n";
+
+    char buf[0x100] = { 0 };
+    sprintf_s(buf, 0x100, "Bosses: 0x%08X, ", main_data->current_save.bosses_defeated);
+    message += buf;
+    std::fill_n(buf, 0x100, 0);
+    sprintf_s(buf, 0x100, "Rescues: 0x%04X, ", (uint16_t)(main_data->current_save.progression_flags >> 8));
+    message += buf;
+    std::fill_n(buf, 0x100, 0);
+    sprintf_s(buf, 0x100, "Quests: 0x%08X, ", (uint32_t)(main_data->current_save.progression_flags >> 24));
+    message += buf;
+    std::fill_n(buf, 0x100, 0);
+    helperFunctions.log_info(message.c_str());
 }

@@ -337,6 +337,7 @@ public:
 
     uint64_t GetProcessedItems() const;
     uint64_t GetMusicalScores() const;
+    std::unordered_map<int64_t, uint64_t> GetReceivedItems() const;
 
     void SetProcessedItems(uint64_t items);
     void SetMusicalScores(uint64_t musical_scores);

@@ -97,10 +97,14 @@ public:
     void ProcessDeathLinkGroupCmd(std::string args);
     void ProcessDamageLinkCmd(std::string args);
     void ProcessDamageLinkGroupCmd(std::string args);
+    void ProcessInventoryCmd(std::string args);
+    void ProcessInformationCmd(std::string args);
 
     std::string FormatPlayerNameForLog(std::string& player);
     std::string FormatNetworkItemForLog(AP_NetworkItem& item);
 private:
+    void PrintGameFlags();
+
     bool running = false;
     bool goaled = false;
     bool locations_scouted = false;

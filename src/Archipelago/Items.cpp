@@ -432,6 +432,11 @@ uint64_t ItemManager::GetMusicalScores() const
     return musical_scores;
 }
 
+std::unordered_map<int64_t, uint64_t> ItemManager::GetReceivedItems() const
+{
+    return received_items;
+}
+
 void ItemManager::SetProcessedItems(uint64_t items)
 {
     items_processed = items;
