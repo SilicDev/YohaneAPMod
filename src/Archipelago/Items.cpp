@@ -402,7 +402,7 @@ char* ItemManager::GetItemDescription(int64_t item_id)
     }
     else if (item_data.find(item_id) != item_data.end())
     {
-        return item_data[item_id].name.data();
+        return item_data[item_id].description.data();
     }
     else if (item_id < item_db.stats->max - 1)
     {
