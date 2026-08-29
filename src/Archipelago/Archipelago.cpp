@@ -900,7 +900,7 @@ void APManager::ParseUpgradeHints(std::string hints)
     {
         for (int j = 0; j < value[i].size(); j++)
         {
-            upgrade_hints[i].insert({ value[i][j][0].asInt64(), value[i][j][1].asInt64() });
+            upgrade_hints[i].insert({ value[i][j][0].asInt(), value[i][j][1].asInt64() });
         }
     }
 }
@@ -941,7 +941,7 @@ void APManager::SetUpgradeHintTriggered(uint64_t hint)
     {
         if (ap_upgrade_hints_enabled)
         {
-            for (auto& loc : upgrade_hints[hint])
+            for (auto& loc : upgrade_hints[(uint8_t)hint])
             {
                 AP_CreateHints({ loc.second }, loc.first);
             }

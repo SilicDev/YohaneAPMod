@@ -125,7 +125,7 @@ private:
     std::unordered_map<int64_t, ItemData> item_data;
     std::unordered_map<int64_t, ItemData> location_item_data;
 
-    std::unordered_map<uint8_t, std::set<std::pair<int64_t, int64_t>>> upgrade_hints;
+    std::unordered_map<uint8_t, std::set<std::pair<int32_t, int64_t>>> upgrade_hints;
 
     bool deathlink_enabled = false;
     bool can_send_deathlink = false;
