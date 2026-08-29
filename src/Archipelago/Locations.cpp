@@ -404,7 +404,7 @@ bool OnOpenChestOverride(void* chest_work, int64_t param_1, uint64_t* param_2, u
             LocationID location_id = chest_data[main_data->current_save.area][chest_id];
             if ((int64_t)location_id != 0 && !APManager::getInstance().IsLocationChecked(location_id))
             {
-                *(uint32_t*)((uint64_t)chest_work + 0x234) = APManager::getInstance().GetLocationItemData()[(int64_t)location_id].id;
+                *(uint32_t*)((uint64_t)chest_work + 0x234) = (uint32_t)APManager::getInstance().GetLocationItemData()[(int64_t)location_id].id;
                 helperFunctions.log_debug("Found %d", *(uint32_t*)((uint64_t)chest_work + 0x234));
                 if (*(int32_t*)((uint64_t)chest_work + 0x234) >= 0)
                     ItemManager::getInstance().AddProcessedItem(chest_item_id);
@@ -458,6 +458,7 @@ void LocationManager::Init(const char* path)
 void LocationManager::OnConnect()
 {
     OnFrameCheckChests();
+    OnFrameCheckRecipes();
 }
 
 void LocationManager::OnFrame(double delta)
@@ -465,11 +466,11 @@ void LocationManager::OnFrame(double delta)
     if (main_data->saving)
     {
         OnFrameCheckChests();
+        OnFrameCheckRecipes();
     }
     OnFrameCheckBosses();
     OnFrameCheckRescues();
     OnFrameCheckQuests();
-    OnFrameCheckRecipes();
 }
 
 void LocationManager::OnLocationChecked(int64_t location_id)
@@ -574,7 +575,7 @@ void LocationManager::OnFrameCheckQuests()
 
 void LocationManager::OnFrameCheckRecipes()
 {
-    for (int i = 0; i < item_create_db.stats->max; i++)
+    for (uint32_t i = 0; i < item_create_db.stats->max; i++)
     {
         if (main_data->current_save.inventory[701 + i].data.count != 0)
         {
