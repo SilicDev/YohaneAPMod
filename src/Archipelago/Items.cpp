@@ -273,7 +273,7 @@ void ItemManager::OnItemRecv(int64_t item_id, bool notify)
             DisplayMessage(APManager::getInstance().GetItemName(item_id));
         items_processed++;
     }
-    else if (item_id > item_db.stats->max && !(item_id >= (int64_t)ItemID::SMALL_YEN && item_id <= (int64_t)ItemID::LARGE_YEN))
+    else if ((item_id > item_db.stats->max || item_id <= (int64_t)ItemID::SEA_DEITYS_CHARM) && !(item_id >= (int64_t)ItemID::SMALL_YEN && item_id <= (int64_t)ItemID::LARGE_YEN))
     {
         // important non Vanilla items have to be readded
         AddItemCount(main_data->current_save.inventory, item_id, 1);
