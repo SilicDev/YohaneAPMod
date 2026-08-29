@@ -346,7 +346,8 @@ void APManager::OnFrame(double delta)
                     helperFunctions.log_info(msg->text.c_str());
                     break;
                 case AP_MessageType::ItemSend:
-                    helperFunctions.log_info("Sent %s to %s",
+                    helperFunctions.log_info("%s sent %s to %s",
+                        FormatPlayerNameForLog(((AP_ItemSendMessage*)msg)->item.playerName).c_str(),
                         FormatNetworkItemForLog(((AP_ItemSendMessage*)msg)->item).c_str(),
                         FormatPlayerNameForLog(((AP_ItemSendMessage*)msg)->recvPlayer).c_str());
                     break;
@@ -648,7 +649,7 @@ void APManager::SendGoal()
 
 void APManager::SendDeath(std::string cause)
 {
-    helperFunctions.log_debug("DeathLink: Sending death to your friends...");
+    helperFunctions.log_info("DeathLink: Sending death to your friends...");
     std::chrono::time_point<std::chrono::system_clock> timestamp = std::chrono::system_clock::now();
     AP_Bounce b;
     Json::Value v;
@@ -712,7 +713,7 @@ void APManager::UpdateDeathlinkGroup(std::string group)
 
 void APManager::SendDamage(uint32_t damage, std::string cause)
 {
-    helperFunctions.log_debug("SharedDamage: Sending %d damage to your friends...", damage);
+    helperFunctions.log_info("SharedDamage: Sending %d damage to your friends...", damage);
     std::vector<std::string> tags = { "SharedDamage" + damagelink_group };
     Json::Value msg;
     std::chrono::time_point<std::chrono::system_clock> timestamp = std::chrono::system_clock::now();
