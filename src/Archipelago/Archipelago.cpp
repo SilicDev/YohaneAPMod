@@ -43,6 +43,8 @@ CommandHandler inventory_cmd = { "inventory", "", "Print the AP received items."
             [](const char* args) { APManager::getInstance().ProcessInventoryCmd(args); } };
 CommandHandler silic_asked_cmd = { "silic_asked", "[type]", "Print additional information about the game state.",
             [](const char* args) { APManager::getInstance().ProcessInformationCmd(args); } };
+CommandHandler reset_processed_items_cmd = { "reset_processed_items", "", "",
+            [](const char* args) { ItemManager::getInstance().SetProcessedItems(0); APManager::getInstance().WriteAPSave(); } };
 
 void CryptData(uint64_t* data, uint64_t size)
 {
@@ -65,6 +67,7 @@ bool APManager::Init(const char* path) {
         helperFunctions.register_command(damagelink_group_cmd);
         helperFunctions.register_command(inventory_cmd);
         helperFunctions.register_command(silic_asked_cmd);
+        helperFunctions.register_command(reset_processed_items_cmd);
     }
     helperFunctions.log_info("Initialising AP connection...");
     char buf[MAX_PATH] = { 0 };
