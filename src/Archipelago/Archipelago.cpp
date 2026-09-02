@@ -18,7 +18,7 @@
 #include "../YOHANE_BID/Variables.h"
 
 constexpr char* gameTitle = "YOHANE THE PARHELION -BLAZE in the DEEPBLUE-";
-constexpr int modVersion[3] = { 0, 0, 1 };
+constexpr int modVersion[3] = { 0, 0, 4 };
 constexpr int minimum_world_version[3] = {0, 2, 0};
 
 constexpr char* ap_config_section = "AP Config";
@@ -617,10 +617,14 @@ void APManager::OnBounced(AP_Bounce bounced)
 
 void APManager::OnDeathLink(std::string source, std::string cause)
 {
-    std::string message = "Received death from " + source;
+    std::string message = "Received death";
     if (!cause.empty())
     {
         message += +": " + cause;
+    }
+    else
+    {
+        message += " from " + source;
     }
     helperFunctions.log_info(message.c_str());
     uint64_t flags_struct_ptr = *((uint64_t*)(*((uint64_t*)(*((uint64_t*)flags_struct + 5)) + 1)) + 1);
@@ -631,10 +635,14 @@ void APManager::OnDeathLink(std::string source, std::string cause)
 
 void APManager::OnDamageLink(std::string source, uint32_t damage, std::string cause)
 {
-    std::string message = "Received " + std::to_string(damage) + " Damage from " + source;
+    std::string message = "Received " + std::to_string(damage) + " damage";
     if (!cause.empty())
     {
         message += +": " + cause;
+    }
+    else
+    {
+        message += " from " + source;
     }
     helperFunctions.log_info(message.c_str());
     uint64_t yohane_struct_ptr = *((uint64_t*)(*((uint64_t*)(*((uint64_t*)(*((uint64_t*)flags_struct + 5)) + 1)) + 1)) + 45);
