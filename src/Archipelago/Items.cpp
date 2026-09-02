@@ -221,8 +221,8 @@ void ItemManager::OnFrame(double delta)
     for (auto& upgrade : upgrade_data)
     {
         bool in_room = main_data->current_save.area == upgrade.second.area && upgrade.second.rooms.find(main_data->current_save.room) != upgrade.second.rooms.end();
-        if (received_items[(int64_t)upgrade.first] != 0 && 
-            !((in_room) || APManager::getInstance().IsLocationChecked(upgrade.second.location)))
+        if (received_items[(int64_t)upgrade.first] != 0 &&
+            (!in_room || APManager::getInstance().IsLocationChecked(upgrade.second.location)))
         {
             main_data->current_save.inventory[(int64_t)upgrade.first].data.count = 1;
         }
@@ -273,7 +273,7 @@ void ItemManager::OnItemRecv(int64_t item_id, bool notify)
             DisplayMessage(APManager::getInstance().GetItemName(item_id));
         items_processed++;
     }
-    else if ((item_id > item_db.stats->max || item_id <= (int64_t)ItemID::SEA_DEITYS_CHARM) && !(item_id >= (int64_t)ItemID::SMALL_YEN && item_id <= (int64_t)ItemID::LARGE_YEN))
+    else if ((item_id > item_db.stats->max || item_id <= (int64_t)ItemID::MARI_UPGRADE) && !(item_id >= (int64_t)ItemID::SMALL_YEN && item_id <= (int64_t)ItemID::LARGE_YEN))
     {
         // important non Vanilla items have to be readded
         AddItemCount(main_data->current_save.inventory, item_id, 1);

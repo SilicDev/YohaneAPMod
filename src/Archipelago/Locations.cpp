@@ -371,15 +371,15 @@ std::unordered_map<LocationID, uint32_t> character_rescue_flags = {
     {LocationID::HANAMARU_RESCUE, 0x4000},
 };
 
-std::unordered_map<LocationID, uint32_t> character_upgrade_flags = {
-    {LocationID::CHIKA_UPGRADE_QUEST, 0x200},
-    {LocationID::RIKO_UPGRADE_QUEST, 0x1000},
-    {LocationID::KANAN_UPGRADE_QUEST, 0x8000},
-    {LocationID::HANAMARU_UPGRADE_QUEST, 0x40000},
-    {LocationID::RUBY_UPGRADE_QUEST, 0x200000},
-    {LocationID::YOU_UPGRADE_QUEST, 0x1000000},
-    {LocationID::DIA_UPGRADE_QUEST, 0x8000000},
-    {LocationID::MARI_UPGRADE_QUEST, 0x40000000},
+std::unordered_map<LocationID, std::pair<uint32_t, uint32_t>> character_upgrade_flags = {
+    {LocationID::CHIKA_UPGRADE_QUEST, {0x200, 0x0100}},
+    {LocationID::RIKO_UPGRADE_QUEST, {0x1000, 0x0400}},
+    {LocationID::KANAN_UPGRADE_QUEST, {0x8000, 0x1000}},
+    {LocationID::HANAMARU_UPGRADE_QUEST, {0x40000, 0x100000}},
+    {LocationID::RUBY_UPGRADE_QUEST, {0x200000, 0x400000}},
+    {LocationID::YOU_UPGRADE_QUEST, {0x1000000, 0x010000}},
+    {LocationID::DIA_UPGRADE_QUEST, {0x8000000, 0x4000}},
+    {LocationID::MARI_UPGRADE_QUEST, {0x40000000, 0x040000}},
 };
 
 FuncPointer(bool, OpenChest, (void*, int64_t, uint64_t*, uint64_t), (0x047c220 + base));
@@ -567,8 +567,12 @@ void LocationManager::OnFrameCheckQuests()
     for (auto& flags : character_upgrade_flags)
     {
         if (APManager::getInstance().IsLocationChecked(flags.first))
-            main_data->current_save.progression_flags |= ((uint64_t)flags.second << 24);
-        else if ((main_data->current_save.progression_flags & ((uint64_t)flags.second << 24)) != 0)
+        {
+            main_data->current_save.progression_flags |= ((uint64_t)flags.second.first << 24);
+            main_data->current_save.character_unlocks |= flags.second.second;
+            // if checked, give ability
+        }
+        else if ((main_data->current_save.progression_flags & ((uint64_t)flags.second.first << 24)) != 0)
             APManager::getInstance().CheckLocation(flags.first);
     }
 }
