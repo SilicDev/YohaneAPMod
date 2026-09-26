@@ -92,6 +92,7 @@ public:
     bool APUpgradeHintsEnabled() const;
     bool IsUpgradeHintTriggered(uint64_t hint) const;
     void SetUpgradeHintTriggered(uint64_t hint);
+    uint8_t GetDropRateIncrease() const { return drop_rate_increase; }
 
     void ProcessDeathLinkCmd(std::string args);
     void ProcessDeathLinkGroupCmd(std::string args);
@@ -136,6 +137,7 @@ private:
     uint32_t last_max_health = 0;
 
     bool craftsanity = false;
+    uint8_t drop_rate_increase = 0;
     bool vanilla_upgrade_hints_enabled = false;
     bool ap_upgrade_hints_enabled = false;
     uint8_t upgrade_hints_triggered = 0;

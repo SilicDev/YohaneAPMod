@@ -46,6 +46,14 @@ CommandHandler silic_asked_cmd = { "silic_asked", "[type]", "Print additional in
 CommandHandler reset_processed_items_cmd = { "reset_processed_items", "", "",
             [](const char* args) { ItemManager::getInstance().SetProcessedItems(0); APManager::getInstance().WriteAPSave(); } };
 
+std::shared_ptr<FunctionHook<float, EquipmentEffect>> on_get_equipment_effect_strength;
+float GetEquipmentEffectStrengthOverride(EquipmentEffect effect)
+{
+    if (effect == EquipmentEffect::INCREASE_DROPRATE)
+        return APManager::getInstance().GetDropRateIncrease() + on_get_equipment_effect_strength->CallOriginal(effect);
+    return on_get_equipment_effect_strength->CallOriginal(effect);
+}
+
 void CryptData(uint64_t* data, uint64_t size)
 {
     size = size / 8;
@@ -68,6 +76,7 @@ bool APManager::Init(const char* path) {
         helperFunctions.register_command(inventory_cmd);
         helperFunctions.register_command(silic_asked_cmd);
         helperFunctions.register_command(reset_processed_items_cmd);
+        on_get_equipment_effect_strength = std::make_shared<FunctionHook<float, EquipmentEffect>>(GetEquipmentEffectStrength);
         has_inited = true;
     }
     helperFunctions.log_info("Initialising AP connection...");
@@ -143,6 +152,7 @@ bool APManager::Init(const char* path) {
     AP_RegisterSlotDataIntCallback("craftsanity", [this](int craftsanity) { this->craftsanity = craftsanity; });
     AP_RegisterSlotDataRawCallback("upgrade_hints", [](std::string hints) { APManager::getInstance().ParseHintTypes(hints); });
     AP_RegisterSlotDataRawCallback("upgrades", [](std::string hints) { APManager::getInstance().ParseUpgradeHints(hints); });
+    AP_RegisterSlotDataIntCallback("drop_rate_increase", [this](int drop_rate_increase) { this->drop_rate_increase = drop_rate_increase; });
 
     LoadAPSave();
 
@@ -278,6 +288,7 @@ void APManager::Shutdown()
     damagelink_group.clear();
 
     craftsanity = false;
+    drop_rate_increase = 0;
     vanilla_upgrade_hints_enabled = false;
     ap_upgrade_hints_enabled = false;
     upgrade_hints_triggered = 0;
