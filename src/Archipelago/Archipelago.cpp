@@ -660,6 +660,7 @@ void APManager::OnDamageLink(std::string source, uint32_t damage, std::string ca
     uint64_t flags_struct_ptr = *((uint64_t*)(*((uint64_t*)(*((uint64_t*)flags_struct + 5)) + 1)) + 1);
     uint64_t yohane_struct_ptr = *((uint64_t*)flags_struct_ptr + 69);
     *((uint32_t*)yohane_struct_ptr + 0xA) = max(*((uint32_t*)yohane_struct_ptr + 0xA) - damage, 0);
+    last_health = *((uint32_t*)yohane_struct_ptr + 0xA);
 }
 
 void APManager::SendGoal()
