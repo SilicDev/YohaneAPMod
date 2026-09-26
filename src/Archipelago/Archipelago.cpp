@@ -68,6 +68,7 @@ bool APManager::Init(const char* path) {
         helperFunctions.register_command(inventory_cmd);
         helperFunctions.register_command(silic_asked_cmd);
         helperFunctions.register_command(reset_processed_items_cmd);
+        has_inited = true;
     }
     helperFunctions.log_info("Initialising AP connection...");
     char buf[MAX_PATH] = { 0 };
@@ -447,8 +448,8 @@ void APManager::OnFrame(double delta)
             if (damagelink_enabled)
             {
                 uint64_t yohane_struct_ptr = *((uint64_t*)flags_struct_ptr + 69);
-                uint32_t health = *((uint32_t*)yohane_struct_ptr + 5);
-                uint32_t max_health = *((uint32_t*)yohane_struct_ptr + 6);
+                uint32_t health = *((uint32_t*)yohane_struct_ptr + 0xA);
+                uint32_t max_health = *((uint32_t*)yohane_struct_ptr + 0xB);
                 if (health < last_health && max_health == last_max_health)
                 {
                     SendDamage(last_health - health, "%YOU% let Yohane get hit.");
@@ -645,8 +646,9 @@ void APManager::OnDamageLink(std::string source, uint32_t damage, std::string ca
         message += " from " + source;
     }
     helperFunctions.log_info(message.c_str());
-    uint64_t yohane_struct_ptr = *((uint64_t*)(*((uint64_t*)(*((uint64_t*)(*((uint64_t*)flags_struct + 5)) + 1)) + 1)) + 45);
-    *(int16_t*)(yohane_struct_ptr + 0x28) = max(*(int16_t*)(yohane_struct_ptr + 0x28) - damage, 0);
+    uint64_t flags_struct_ptr = *((uint64_t*)(*((uint64_t*)(*((uint64_t*)flags_struct + 5)) + 1)) + 1);
+    uint64_t yohane_struct_ptr = *((uint64_t*)flags_struct_ptr + 69);
+    *((uint32_t*)yohane_struct_ptr + 0xA) = max(*((uint32_t*)yohane_struct_ptr + 0xA) - damage, 0);
 }
 
 void APManager::SendGoal()
