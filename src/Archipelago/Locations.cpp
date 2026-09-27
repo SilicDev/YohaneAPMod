@@ -328,6 +328,16 @@ std::unordered_map<Area, std::unordered_map<uint8_t, LocationID>> chest_data =
         }
     },
     {
+        Area::SHIPWRECK,
+        {
+            {2, LocationID::SHIPWRECK_POSTAL_GUILD_BAG_CHEST},
+            {3, LocationID::SHIPWRECK_GLOVES_OF_MIGHT_CHEST},
+            {4, LocationID::SHIPWRECK_FINAL_GUARD_CHEST},
+            {7, LocationID::SHIPWRECK_SEALED_OFF_CHEST},
+            {8, LocationID::SHIPWRECK_SPIKEY_BALL_FISH_CHEST},
+        }
+    },
+    {
         Area::INFERNAL_ALTAR,
         {
             {1, LocationID::INFERNAL_ALTAR_DARK_ROOM_CHEST},
@@ -413,7 +423,7 @@ bool OnOpenChestOverride(void* chest_work, int64_t param_1, uint64_t* param_2, u
                     *(uint32_t*)((uint64_t)chest_work + 0x234) = 0;
                 }
                 helperFunctions.log_debug("Found %d", *(uint32_t*)((uint64_t)chest_work + 0x234));
-                if (*(int32_t*)((uint64_t)chest_work + 0x234) >= 0)
+                if (*(int32_t*)((uint64_t)chest_work + 0x234) > 0)
                     ItemManager::getInstance().AddProcessedItem(chest_item_id);
                 APManager::getInstance().CheckLocation(location_id);
             }
