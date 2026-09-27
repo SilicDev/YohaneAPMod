@@ -414,16 +414,9 @@ bool OnOpenChestOverride(void* chest_work, int64_t param_1, uint64_t* param_2, u
             LocationID location_id = chest_data[main_data->current_save.area][chest_id];
             if ((int64_t)location_id != 0 && !APManager::getInstance().IsLocationChecked(location_id))
             {
-                if (APManager::getInstance().GetLocationItemData()[(int64_t)location_id].local)
-                {
-                    *(uint32_t*)((uint64_t)chest_work + 0x234) = (uint32_t)APManager::getInstance().GetLocationItemData()[(int64_t)location_id].id;
-                }
-                else
-                {
-                    *(uint32_t*)((uint64_t)chest_work + 0x234) = 0;
-                }
+                *(uint32_t*)((uint64_t)chest_work + 0x234) = (uint32_t)APManager::getInstance().GetLocationItemData()[(int64_t)location_id].id;
                 helperFunctions.log_debug("Found %d", *(uint32_t*)((uint64_t)chest_work + 0x234));
-                if (*(int32_t*)((uint64_t)chest_work + 0x234) > 0)
+                if (APManager::getInstance().GetLocationItemData()[(int64_t)location_id].local)
                     ItemManager::getInstance().AddProcessedItem(chest_item_id);
                 APManager::getInstance().CheckLocation(location_id);
             }
