@@ -154,6 +154,7 @@ bool APManager::Init(const char* path) {
     AP_RegisterSlotDataRawCallback("upgrades", [](std::string hints) { APManager::getInstance().ParseUpgradeHints(hints); });
     AP_RegisterSlotDataIntCallback("drop_rate_increase", [this](int drop_rate_increase) { this->drop_rate_increase = drop_rate_increase; });
 
+    ItemManager::getInstance().OnItemClear();
     LoadAPSave();
 
     fmt = "%s - AP Mod Vers. %d.%d.%d";
@@ -520,7 +521,8 @@ void APManager::OnLocationInfo(std::vector<AP_NetworkItem> location_info)
                         std::to_string(item.location - 700) + ") " + item.itemName,
                         GetItemDescription(item.item),
                         item.flags,
-                        item.location
+                        item.location,
+                        true
                     };
                     location_item_data[item.location] = item_data[item.location];
                 }
@@ -532,7 +534,8 @@ void APManager::OnLocationInfo(std::vector<AP_NetworkItem> location_info)
                         std::to_string(item.location - 700) + ") " + item.itemName,
                         GetItemDescription(item.item),
                         item.flags,
-                        item.location
+                        item.location,
+                        true
                     };
                     location_item_data[item.location] = item_data[item.location];
                 }
@@ -561,7 +564,8 @@ void APManager::OnLocationInfo(std::vector<AP_NetworkItem> location_info)
                         item.itemName,
                         build_description(item),
                         item.flags,
-                        item.location
+                        item.location,
+                        true
                     };
                     location_item_data[item.location] = item_data[item.item];
                 }
@@ -572,7 +576,8 @@ void APManager::OnLocationInfo(std::vector<AP_NetworkItem> location_info)
                         item.itemName,
                         GetItemDescription(item.item),
                         item.flags,
-                        item.location
+                        item.location,
+                        true
                     };
                 }
             }

@@ -28,6 +28,7 @@ struct ItemData
     std::string description;
     int flags = 0;
     int64_t location = 0;
+    bool local = false;
 };
 
 class APManager
