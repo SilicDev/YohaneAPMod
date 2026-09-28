@@ -18,7 +18,7 @@
 #include "../YOHANE_BID/Variables.h"
 
 constexpr char* gameTitle = "YOHANE THE PARHELION -BLAZE in the DEEPBLUE-";
-constexpr int modVersion[3] = { 0, 0, 4 };
+constexpr int modVersion[3] = { 0, 0, 5 };
 constexpr int minimum_world_version[3] = {0, 2, 0};
 
 constexpr char* ap_config_section = "AP Config";

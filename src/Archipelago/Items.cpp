@@ -266,6 +266,7 @@ void ItemManager::OnItemClear()
 void ItemManager::OnItemRecv(int64_t item_id, bool notify)
 {
     items_received++;
+    helperFunctions.log_debug("Received %s: (%d|%d)", APManager::getInstance().GetItemName(item_id), items_received, items_processed);
     if (items_received > items_processed)
     {
         AddItemCount(main_data->current_save.inventory, item_id, 1);
