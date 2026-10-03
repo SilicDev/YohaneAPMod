@@ -77,6 +77,7 @@ bool APManager::Init(const char* path) {
         helperFunctions.register_command(silic_asked_cmd);
         helperFunctions.register_command(reset_processed_items_cmd);
         on_get_equipment_effect_strength = std::make_shared<FunctionHook<float, EquipmentEffect>>(GetEquipmentEffectStrength);
+        on_get_equipment_effect_strength->Hook(GetEquipmentEffectStrengthOverride);
         has_inited = true;
     }
     helperFunctions.log_info("Initialising AP connection...");
