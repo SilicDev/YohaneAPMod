@@ -578,8 +578,8 @@ void LocationManager::OnFrameCheckQuests()
     {
         if (APManager::getInstance().IsLocationChecked(flags.first))
         {
-            main_data->current_save.progression_flags |= ((uint64_t)flags.second.first << 24);
-            main_data->current_save.character_unlocks |= flags.second.second;
+            //main_data->current_save.progression_flags |= ((uint64_t)flags.second.first << 24);
+            //main_data->current_save.character_unlocks |= flags.second.second;
             // if checked, give ability
         }
         else if ((main_data->current_save.progression_flags & ((uint64_t)flags.second.first << 24)) != 0)
