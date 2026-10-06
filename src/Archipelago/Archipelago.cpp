@@ -348,6 +348,10 @@ void APManager::OnFrame(double delta)
                 running = false;
                 return;
             }
+            if (!is_save_checked)
+            {
+                return;
+            }
             if (main_data->saving)
             {
                 WriteAPSave();
@@ -483,17 +487,21 @@ void APManager::OnItemClear()
 
 void APManager::OnItemRecv(int64_t item_id, bool notify)
 {
-    ItemManager::getInstance().OnItemRecv(item_id, notify);
+    if (running)
+        ItemManager::getInstance().OnItemRecv(item_id, notify);
 }
 
 void APManager::OnLocationChecked(int64_t location_id)
 {
-    if (checked_locations.find(location_id) == checked_locations.end())
-        checked_locations.insert(location_id);
-    if (checked_locations.find(location_id) != checked_locations.end() && locations_checked.find(location_id) == locations_checked.end())
+    if (running)
     {
-        LocationManager::getInstance().OnLocationChecked(location_id);
-        locations_checked.emplace(location_id);
+        if (checked_locations.find(location_id) == checked_locations.end())
+            checked_locations.insert(location_id);
+        if (checked_locations.find(location_id) != checked_locations.end() && locations_checked.find(location_id) == locations_checked.end())
+        {
+            LocationManager::getInstance().OnLocationChecked(location_id);
+            locations_checked.emplace(location_id);
+        }
     }
 }
 
