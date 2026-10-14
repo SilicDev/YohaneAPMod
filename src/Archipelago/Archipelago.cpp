@@ -313,6 +313,7 @@ void APManager::OnFrame(double delta)
                 DisplayMessage("Reconnecting...");
             }
         }
+        last_connection = status;
         if (status == AP_ConnectionStatus::ConnectionRefused)
         {
             if (item_messages == 0)
@@ -475,7 +476,6 @@ void APManager::OnFrame(double delta)
                 last_max_health = max_health;
             }
         }
-        last_connection = status;
     }
 }
 
