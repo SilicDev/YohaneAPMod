@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <set>
+#include <queue>
 
 enum class LocationID
 {
@@ -205,6 +206,7 @@ public:
     void operator=(LocationManager const&) = delete;
 
     void Init(const char* path);
+    void OnItemClear();
     void OnConnect();
     void OnFrame(double delta);
 
@@ -218,4 +220,6 @@ private:
     void OnFrameCheckRescues();
     void OnFrameCheckQuests();
     void OnFrameCheckRecipes();
+
+    std::queue<int64_t> location_queue;
 };

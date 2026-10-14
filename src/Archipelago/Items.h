@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string>
 #include <unordered_map>
+#include <queue>
 
 #include "../YOHANE_BID/Structs.h"
 
@@ -350,4 +351,5 @@ private:
     uint64_t musical_scores = 0;
 
     std::unordered_map<int64_t, uint64_t> received_items;
+    std::queue<std::pair<int64_t, bool>> item_queue;
 };

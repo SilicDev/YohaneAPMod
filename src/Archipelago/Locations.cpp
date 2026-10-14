@@ -439,7 +439,7 @@ bool OnCraftRecipeOverride(void* work, uint64_t* param_1, uint64_t* param_2)
                 int64_t lVar26 = *(int64_t*)(lVar19 + 0x570);
                 int64_t recipe_id = *(uint32_t*)((*(int64_t*)(*(int64_t*)(lVar26 + 0x540) + (int64_t)(*(int32_t*)(lVar26 + 0x558)) * 8)) + 0x2C);
                 int32_t result = (item_create_db.data + recipe_id)->result_id;
-                if ((result < (int64_t)LocationID::RECIPE_01 || result >(int64_t)LocationID::RECIPE_93))
+                if ((result < (int64_t)LocationID::RECIPE_01 || result > (int64_t)LocationID::RECIPE_93))
                 {
                     ItemManager::getInstance().AddProcessedItem(recipe_id + 700);
                     main_data->current_save.inventory[recipe_id + 700].data.count = 1;
@@ -465,44 +465,62 @@ void LocationManager::Init(const char* path)
     }
 }
 
+void LocationManager::OnItemClear()
+{
+    auto size = location_queue.size();
+    for (int i = 0; i < size; i++)
+    {
+        location_queue.pop();
+    }
+}
+
 void LocationManager::OnConnect()
 {
-    OnFrameCheckChests();
-    OnFrameCheckRecipes();
+    //OnFrameCheckChests();
+    //OnFrameCheckRecipes();
 }
 
 void LocationManager::OnFrame(double delta)
 {
-    if (main_data->saving)
+    if (APManager::getInstance().IsValidated())
     {
-        OnFrameCheckChests();
-        OnFrameCheckRecipes();
+        if (!location_queue.empty())
+        {
+            int64_t location_id = location_queue.front();
+            if (location_id >= (uint64_t)LocationID::SUNKEN_TEMPLE_CAST_TUTORIAL_LEFT_CHEST && location_id <= (uint64_t)LocationID::CHEST_ID_MAX)
+            {
+                auto& data = chest_flags[(LocationID)location_id];
+                main_data->current_save.flags[data.first] |= data.second;
+            }
+            if (location_id >= (uint64_t)LocationID::SUNKEN_TEMPLE_BOSS && location_id <= (uint64_t)LocationID::INFERNAL_ALTAR_BOSS_REFIGHT)
+            {
+                auto& data = boss_data[(LocationID)location_id];
+                main_data->current_save.bosses_defeated |= data;
+            }
+            if (location_id >= (uint64_t)LocationID::RECIPE_01 && location_id <= (uint64_t)LocationID::RECIPE_93)
+            {
+                main_data->current_save.inventory[location_id].data.count = 1;
+            }
+            if (location_id >= (uint64_t)LocationID::CHIKA_RESCUE && location_id <= (uint64_t)LocationID::HANAMARU_RESCUE)
+            {
+                main_data->current_save.progression_flags |= (((uint64_t)character_rescue_flags[(LocationID)location_id]) << 8);
+            }
+            location_queue.pop();
+        }
+        if (main_data->saving)
+        {
+            OnFrameCheckChests();
+            OnFrameCheckRecipes();
+        }
+        OnFrameCheckBosses();
+        OnFrameCheckRescues();
+        OnFrameCheckQuests();
     }
-    OnFrameCheckBosses();
-    OnFrameCheckRescues();
-    OnFrameCheckQuests();
 }
 
 void LocationManager::OnLocationChecked(int64_t location_id)
 {
-    if (location_id >= (uint64_t)LocationID::SUNKEN_TEMPLE_CAST_TUTORIAL_LEFT_CHEST && location_id <= (uint64_t)LocationID::CHEST_ID_MAX)
-    {
-        auto &data = chest_flags[(LocationID)location_id];
-        main_data->current_save.flags[data.first] |= data.second;
-    }
-    if (location_id >= (uint64_t)LocationID::SUNKEN_TEMPLE_BOSS && location_id <= (uint64_t)LocationID::INFERNAL_ALTAR_BOSS_REFIGHT)
-    {
-        auto& data = boss_data[(LocationID)location_id];
-        main_data->current_save.bosses_defeated |= data;
-    }
-    if (location_id >= (uint64_t)LocationID::RECIPE_01 && location_id <= (uint64_t)LocationID::RECIPE_93)
-    {
-        main_data->current_save.inventory[location_id].data.count = 1;
-    }
-    if (location_id >= (uint64_t)LocationID::CHIKA_RESCUE && location_id <= (uint64_t)LocationID::HANAMARU_RESCUE)
-    {
-        main_data->current_save.progression_flags |= (((uint64_t)character_rescue_flags[(LocationID)location_id]) << 8);
-    }
+    location_queue.push(location_id);
 }
 
 std::set<int64_t> LocationManager::GetActiveLocations() 

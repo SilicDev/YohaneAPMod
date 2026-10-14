@@ -202,6 +202,27 @@ void ItemManager::Init(const char* path)
 
 void ItemManager::OnFrame(double delta)
 {
+    if (APManager::getInstance().IsValidated() && !item_queue.empty())
+    {
+        std::pair<int64_t, bool> item = item_queue.front();
+        int64_t item_id = item.first;
+        bool notify = item.second;
+        items_received++;
+        //helperFunctions.log_debug("Received %s: (%d|%d)", APManager::getInstance().GetItemName(item_id), items_received, items_processed);
+        if (items_received > items_processed)
+        {
+            AddItemCount(main_data->current_save.inventory, item_id, 1);
+            if (notify)
+                DisplayMessage(APManager::getInstance().GetItemName(item_id));
+            items_processed++;
+        }
+        else if ((item_id > item_db.stats->max || item_id <= (int64_t)ItemID::MARI_UPGRADE) && !(item_id >= (int64_t)ItemID::SMALL_YEN && item_id <= (int64_t)ItemID::LARGE_YEN))
+        {
+            // important non Vanilla items have to be readded
+            AddItemCount(main_data->current_save.inventory, item_id, 1);
+        }
+        item_queue.pop();
+    }
     main_data->current_save.progression_flags &= 0xDB6DB6FF7FFFFF;
     if (received_items[(int64_t)ItemID::BOSS_TOKEN] >= 8 && main_data->current_save.area == Area::SUNKEN_TEMPLE &&
         (main_data->current_save.room == 9 || main_data->current_save.room == 10))
@@ -261,24 +282,16 @@ void ItemManager::OnItemClear()
     items_received = 0;
     musical_scores = 0;
     received_items.clear();
+    auto size = item_queue.size();
+    for (int i = 0; i < size; i++)
+    {
+        item_queue.pop();
+    }
 }
 
 void ItemManager::OnItemRecv(int64_t item_id, bool notify)
 {
-    items_received++;
-    //helperFunctions.log_debug("Received %s: (%d|%d)", APManager::getInstance().GetItemName(item_id), items_received, items_processed);
-    if (items_received > items_processed)
-    {
-        AddItemCount(main_data->current_save.inventory, item_id, 1);
-        if (notify)
-            DisplayMessage(APManager::getInstance().GetItemName(item_id));
-        items_processed++;
-    }
-    else if ((item_id > item_db.stats->max || item_id <= (int64_t)ItemID::MARI_UPGRADE) && !(item_id >= (int64_t)ItemID::SMALL_YEN && item_id <= (int64_t)ItemID::LARGE_YEN))
-    {
-        // important non Vanilla items have to be readded
-        AddItemCount(main_data->current_save.inventory, item_id, 1);
-    }
+    item_queue.push(std::make_pair(item_id, notify));
 }
 
 uint32_t ItemManager::SetItemCount(int64_t item_id, uint32_t amount)

@@ -155,9 +155,6 @@ bool APManager::Init(const char* path) {
     AP_RegisterSlotDataRawCallback("upgrades", [](std::string hints) { APManager::getInstance().ParseUpgradeHints(hints); });
     AP_RegisterSlotDataIntCallback("drop_rate_increase", [this](int drop_rate_increase) { this->drop_rate_increase = drop_rate_increase; });
 
-    ItemManager::getInstance().OnItemClear();
-    LoadAPSave();
-
     fmt = "%s - AP Mod Vers. %d.%d.%d";
     sprintf_s(buf, sizeof(buf), fmt, gameTitle, modVersion[0], modVersion[1], modVersion[2]);
     BOOL success = SetWindowTextA(MainWindowHandle, buf);
@@ -252,12 +249,8 @@ void APManager::WriteAPSave()
     {
         fwrite(data.data(), sizeof(uint64_t), size / 8, file);
         fclose(file);
+        is_ap_save_dirty = false;
     }
-}
-
-bool APManager::IsRunning() const
-{
-    return running;
 }
 
 void APManager::Start()
@@ -274,8 +267,10 @@ void APManager::Shutdown()
     is_valid_save = false;
     is_valid_version = false;
     is_version_checked = false;
+    is_save_checked = false;
     last_area = 0;
     locations_scouted = false;
+    is_ap_save_dirty = true;
 
     seed_name.clear();
     queued_locations.clear();
@@ -306,7 +301,10 @@ void APManager::OnFrame(double delta)
             if (status == AP_ConnectionStatus::Authenticated)
             {
                 DisplayMessage("Connected to AP");
-                LocationManager::getInstance().OnConnect();
+                if (IsValidated())
+                {
+                    LocationManager::getInstance().OnConnect();
+                }
             }
             else if (status == AP_ConnectionStatus::Disconnected)
             {
@@ -325,7 +323,6 @@ void APManager::OnFrame(double delta)
         {
             if (!is_valid_version && is_version_checked)
             {
-                running = false;
                 return;
             }
             if (!is_save_checked && is_valid_save)
@@ -342,19 +339,15 @@ void APManager::OnFrame(double delta)
                     helperFunctions.log_warn("Slot mismatch! AP is shutting down.");
                     is_valid_save = false;
                 }
-
+                is_save_checked = true;
             }
-            if (!is_valid_save)
-            {
-                running = false;
-                return;
-            }
-            if (!is_save_checked)
+            if (!IsValidated())
             {
                 return;
             }
-            if (main_data->saving)
+            if (main_data->saving && is_ap_save_dirty)
             {
+                helperFunctions.log_debug("Game saving, writing AP Save...");
                 WriteAPSave();
             }
             if (AP_IsMessagePending())
@@ -482,27 +475,26 @@ void APManager::OnFrame(double delta)
 void APManager::OnItemClear()
 {
     ItemManager::getInstance().OnItemClear();
+    LocationManager::getInstance().OnItemClear();
     LoadAPSave();
 }
 
 void APManager::OnItemRecv(int64_t item_id, bool notify)
 {
-    if (running)
-        ItemManager::getInstance().OnItemRecv(item_id, notify);
+    ItemManager::getInstance().OnItemRecv(item_id, notify);
+    is_ap_save_dirty = true;
 }
 
 void APManager::OnLocationChecked(int64_t location_id)
 {
-    if (running)
+    if (checked_locations.find(location_id) == checked_locations.end())
+        checked_locations.insert(location_id);
+    if (checked_locations.find(location_id) != checked_locations.end() && locations_checked.find(location_id) == locations_checked.end())
     {
-        if (checked_locations.find(location_id) == checked_locations.end())
-            checked_locations.insert(location_id);
-        if (checked_locations.find(location_id) != checked_locations.end() && locations_checked.find(location_id) == locations_checked.end())
-        {
-            LocationManager::getInstance().OnLocationChecked(location_id);
-            locations_checked.emplace(location_id);
-        }
+        LocationManager::getInstance().OnLocationChecked(location_id);
+        locations_checked.emplace(location_id);
     }
+    is_ap_save_dirty = true;
 }
 
 void APManager::OnLocationInfo(std::vector<AP_NetworkItem> location_info)

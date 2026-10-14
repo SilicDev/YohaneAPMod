@@ -52,9 +52,11 @@ public:
     void LoadAPSave();
     void WriteAPSave();
 
-    bool IsRunning() const;
+    bool IsRunning() const { return running; };
     void Start();
     void Shutdown();
+    bool IsValid() const { return is_valid_save && is_valid_version; }
+    bool IsValidated() const { return IsValid() && is_version_checked && is_save_checked; }
 
     void OnFrame(double delta);
 
@@ -114,6 +116,7 @@ private:
     bool is_save_checked = false;
     bool is_valid_version = false;
     bool is_version_checked = false;
+    bool is_ap_save_dirty = true;
 
     std::string player_name;
     std::string seed_name;
