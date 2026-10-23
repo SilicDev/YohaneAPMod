@@ -210,6 +210,11 @@ void APManager::LoadAPSave()
             ItemManager::getInstance().SetProcessedItems(value["received_items"].asUInt64());
             ItemManager::getInstance().SetMusicalScores(value["musical_scores"].asUInt64());
             upgrade_hints_triggered = value["upgrade_hints"].asUInt();
+            auto& received = ItemManager::getInstance().GetReceivedItems();
+            for (auto item : value["custom_items"].getMemberNames())
+            {
+                received[std::stoll(item)] = value["custom_items"][item].asUInt64();
+            }
             if (player_name != value["playername"].asString())
             {
                 helperFunctions.log_warn("Player name mismatch! AP is shutting down.");
@@ -232,6 +237,13 @@ void APManager::WriteAPSave()
     value["musical_scores"] = ItemManager::getInstance().GetMusicalScores();
     value["upgrade_hints"] = upgrade_hints_triggered;
     value["team"] = 1;
+    value["custom_items"] = Json::Value::Value(Json::objectValue);
+    for (auto& item : ItemManager::getInstance().GetReceivedItems())
+    {
+        int64_t item_id = item.first;
+        if (item_id <= (int64_t)ItemID::MARI_UPGRADE || item_id > item_db.stats->max)
+            value["custom_items"][std::to_string(item.first)] = item.second;
+    }
     std::string data = writer.write(value);
     uint64_t size = data.size() + (8 - data.size() % 8);
     data.resize(size);

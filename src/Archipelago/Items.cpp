@@ -216,11 +216,6 @@ void ItemManager::OnFrame(double delta)
                 DisplayMessage(APManager::getInstance().GetItemName(item_id));
             items_processed++;
         }
-        else if ((item_id > item_db.stats->max || item_id <= (int64_t)ItemID::MARI_UPGRADE) && !(item_id >= (int64_t)ItemID::SMALL_YEN && item_id <= (int64_t)ItemID::LARGE_YEN))
-        {
-            // important non Vanilla items have to be readded
-            AddItemCount(main_data->current_save.inventory, item_id, 1);
-        }
         item_queue.pop();
     }
     main_data->current_save.progression_flags &= 0xDB6DB6FF7FFFFF;
@@ -355,8 +350,7 @@ uint32_t ItemManager::SetItemCount(int64_t item_id, uint32_t amount)
     }
     /*if (item_id >= (int64_t)ItemID::FORTUNE_TELLERS_VEIL && item_id <= (int64_t)ItemID::EQUIPMENTS_MAX)
     {
-        uint32_t slots = main_data->current_save.inventory[(uint32_t)ItemID::FASHION_FOR_DUMMIES].data.count +
-            main_data->current_save.inventory[(uint32_t)ItemID::FASHION_FOR_DUMMIES_2].data.count + 1;
+        uint32_t slots = GetEquipmentSlots(10);
         if (main_data->current_save.equipped_accessory1 == 0)
         {
             main_data->current_save.equipped_accessory1 = (uint32_t)item_id;
@@ -446,7 +440,7 @@ uint64_t ItemManager::GetMusicalScores() const
     return musical_scores;
 }
 
-std::unordered_map<int64_t, uint64_t> ItemManager::GetReceivedItems() const
+std::unordered_map<int64_t, uint64_t>& ItemManager::GetReceivedItems()
 {
     return received_items;
 }
