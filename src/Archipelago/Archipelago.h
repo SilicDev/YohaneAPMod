@@ -46,6 +46,11 @@ public:
     APManager(APManager const&) = delete;
     void operator=(APManager const&) = delete;
 
+    enum class InfernalAltarAccess: uint8_t {
+        BOSSES,
+        ALLIES,
+    };
+
     bool Init(const char* path);
     bool IsInit() const;
 
@@ -96,6 +101,7 @@ public:
     bool IsUpgradeHintTriggered(uint64_t hint) const;
     void SetUpgradeHintTriggered(uint64_t hint);
     uint8_t GetDropRateIncrease() const { return drop_rate_increase; }
+    InfernalAltarAccess GetInfernalAltarAccess() const { return infernal_altar_access; }
 
     void ProcessDeathLinkCmd(std::string args);
     void ProcessDeathLinkGroupCmd(std::string args);
@@ -145,4 +151,5 @@ private:
     bool vanilla_upgrade_hints_enabled = false;
     bool ap_upgrade_hints_enabled = false;
     uint8_t upgrade_hints_triggered = 0;
+    InfernalAltarAccess infernal_altar_access = InfernalAltarAccess::BOSSES;
 };

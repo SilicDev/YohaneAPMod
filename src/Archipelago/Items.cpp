@@ -219,10 +219,24 @@ void ItemManager::OnFrame(double delta)
         item_queue.pop();
     }
     main_data->current_save.progression_flags &= 0xDB6DB6FF7FFFFF;
-    if (received_items[(int64_t)ItemID::BOSS_TOKEN] >= 8 && main_data->current_save.area == Area::SUNKEN_TEMPLE &&
-        (main_data->current_save.room == 9 || main_data->current_save.room == 10))
+    if (main_data->current_save.area == Area::SUNKEN_TEMPLE && (main_data->current_save.room == 9 || main_data->current_save.room == 10))
     {
-        main_data->current_save.progression_flags |= 0x800000; // open Infernal Altar
+        bool open_infernal_altar = false;
+        switch (APManager::getInstance().GetInfernalAltarAccess())
+        {
+        case APManager::InfernalAltarAccess::BOSSES:
+            open_infernal_altar = received_items[(int64_t)ItemID::BOSS_TOKEN] >= 8;
+            break;
+        case APManager::InfernalAltarAccess::ALLIES:
+            open_infernal_altar = (main_data->current_save.character_unlocks & 0x002AAAA0) == 0x002AAAA0;
+            break;
+        default:
+            helperFunctions.log_warn("Unknown InfernalAltarAccess rule (%d) received, the mod might be outdated.", APManager::getInstance().GetInfernalAltarAccess());
+        }
+        if (open_infernal_altar)
+        {
+            main_data->current_save.progression_flags |= 0x800000; // open Infernal Altar
+        }
     }
     main_data->current_save.character_unlocks &= 0xFFD5555F;
     for (auto& c: character_item_flags)

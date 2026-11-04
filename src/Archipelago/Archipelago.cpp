@@ -154,6 +154,7 @@ bool APManager::Init(const char* path) {
     AP_RegisterSlotDataRawCallback("upgrade_hints", [](std::string hints) { APManager::getInstance().ParseHintTypes(hints); });
     AP_RegisterSlotDataRawCallback("upgrades", [](std::string hints) { APManager::getInstance().ParseUpgradeHints(hints); });
     AP_RegisterSlotDataIntCallback("drop_rate_increase", [this](int drop_rate_increase) { this->drop_rate_increase = drop_rate_increase; });
+    AP_RegisterSlotDataIntCallback("infernal_altar_access", [this](int infernal_altar_access) { this->infernal_altar_access = (InfernalAltarAccess)infernal_altar_access; });
 
     fmt = "%s - AP Mod Vers. %d.%d.%d";
     sprintf_s(buf, sizeof(buf), fmt, gameTitle, modVersion[0], modVersion[1], modVersion[2]);
